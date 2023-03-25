@@ -9,10 +9,31 @@ if (!customElements.get('product-form')) {
       this.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
       this.submitButton = this.querySelector('[type="submit"]');
       if (document.querySelector('cart-drawer')) this.submitButton.setAttribute('aria-haspopup', 'dialog');
+
+    }
+
+    addAdditionalProduct(response, config) {
+      // so here we check that cart products has some properties like black-medium so then we add an additional product to it based on the variantID.
+      const variantId = '44823713743170';
+      if (response.handle === "black-leather-bag" && response.variant_options[0] === 'Black' && response.variant_options[1] === 'Medium') {
+        const formData = new FormData();
+        formData.append('id', variantId);
+        config.body = formData;
+        fetch(`${routes.cart_add_url}`, config)
+          .then((response) => response.json())
+          .then((response) => {
+            console.log("product has been Added")
+          }
+          ).catch((e) => {
+            console.error(e);
+          })
+      }
+
     }
 
     onSubmitHandler(evt) {
       evt.preventDefault();
+
       if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
 
       this.handleErrorMessage();
@@ -32,10 +53,12 @@ if (!customElements.get('product-form')) {
         this.cart.setActiveElement(document.activeElement);
       }
       config.body = formData;
-
       fetch(`${routes.cart_add_url}`, config)
         .then((response) => response.json())
         .then((response) => {
+
+          this.addAdditionalProduct(response, config)
+
           if (response.status) {
             this.handleErrorMessage(response.description);
 
@@ -51,7 +74,7 @@ if (!customElements.get('product-form')) {
             return;
           }
 
-          if (!this.error) publish(PUB_SUB_EVENTS.cartUpdate, {source: 'product-form'});
+          if (!this.error) publish(PUB_SUB_EVENTS.cartUpdate, { source: 'product-form' });
           this.error = false;
           const quickAddModal = this.closest('quick-add-modal');
           if (quickAddModal) {
