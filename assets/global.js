@@ -826,7 +826,13 @@ class VariantSelects extends HTMLElement {
     const radios = document.querySelector('variant-radios');
     const selectedOption = radios.querySelector('input:checked');
     const selectedValue = selectedOption.value;
-    this.options.push(selectedValue);
+    // so i added a manual unselected option so when user select this by choice then we put the make our variant
+    // selected color and medium so that our media is updated and user experience is not effected
+    if (this.options[0] === 'Unselected') {
+      this.options = [selectedValue, 'Medium'];
+    } else {
+      this.options.push(selectedValue);
+    }
 
   }
 
@@ -1025,7 +1031,13 @@ class VariantRadios extends VariantSelects {
     // so we get the selected value of dropdown which is size and then push it to options
     const dropdown = document.querySelector('.select__select');
     const selectedValue = dropdown.value;
-    this.options.push(selectedValue)
+    // so when color is selected and we size dropdown is unselected for now so we manually put the medium size to make the our currentVariant
+    // and display image. 
+    if (selectedValue === 'Unselected') {
+      this.options.push('Medium')
+    } else {
+      this.options.push(selectedValue)
+    }
 
 
   }

@@ -117,20 +117,20 @@ class CartItems extends HTMLElement {
 
   }
 
-  hasVariantId(array) {
-    return array.some(obj => obj.variant_id === 44819692978498);
+  hasVariantId(array, variantID) {
+    return array.some(obj => obj.variant_id === variantID);
   }
+
+
 
   updateQuantity(line, quantity, name) {
     this.enableLoading(line);
-
     const body = JSON.stringify({
       line,
       quantity,
       sections: this.getSectionsToRender().map((section) => section.section),
       sections_url: window.location.pathname
     });
-
 
     fetch(`${routes.cart_change_url}`, { ...fetchConfig(), ...{ body } })
       .then((response) => {
@@ -141,10 +141,13 @@ class CartItems extends HTMLElement {
         let parsedState = JSON.parse(state);
         //parsedState.items will have products that are currently present in the cart 
         //so hasVariantId function check that the cart items have variant id of black-medium-handbag
-        const result = this.hasVariantId(parsedState.items)
-        // so if id is not present then it means it is deleted so then we delete the addional product we added 
+        const ourProduct = this.hasVariantId(parsedState.items, 44819692978498)
+        // and check the variant id of our additional product added.
+        const additionalProduct = this.hasVariantId(parsedState.items, 44823713743170)
+        // so if our product id is not present but additional product variant id is present then it means
+        // our product is deleted so should then we delete the addional product as well. 
 
-        if (!result) {
+        if (!ourProduct && additionalProduct) {
           let updatedState = await this.deleteProductBasedOnVariant(44823713743170);
           if (updatedState.length > 0) {
             // so after we delete the additional product we have to update the parsedstate.item array.
