@@ -807,6 +807,7 @@ class VariantSelects extends HTMLElement {
     this.removeErrorMessage();
     this.updateVariantStatuses();
     this.filterImageVariant();
+    this.updateAddtoCartDisableOption()
     if (!this.currentVariant) {
       this.toggleAddButton(true, '', true);
       this.setUnavailable();
@@ -818,6 +819,23 @@ class VariantSelects extends HTMLElement {
       this.updateShareUrl();
     }
   }
+
+  updateAddtoCartDisableOption() {
+    const productForm = document.getElementById(`product-form-${this.dataset.section}`);
+    if (!productForm) return;
+    const dropdown = document.querySelector('.select__select');
+    const selectedValue = dropdown.value;
+    const addButton = productForm.querySelector('[name="add"]');
+    const buyButton = productForm.querySelector('.product-form__buttons .shopify-payment-button button');
+    if (selectedValue === 'Unselected') {
+      addButton.setAttribute("disabled", "disabled");
+      buyButton.setAttribute("disabled", "disabled");
+    } else {
+      addButton.removeAttribute("disabled");
+      buyButton.removeAttribute("disabled");
+    }
+  }
+
 
   filterImageVariant() {
     if (this.currentVariant.featured_image && this.currentVariant.featured_image.alt) {
@@ -965,7 +983,10 @@ class VariantSelects extends HTMLElement {
 
         const price = document.getElementById(`price-${this.dataset.section}`);
 
-        if (price) price.classList.remove('visibility-hidden');
+        if (price) {
+          price.classList.remove('visibility-hidden')
+
+        }
 
         if (inventoryDestination) inventoryDestination.classList.toggle('visibility-hidden', inventorySource.innerText === '');
 
@@ -993,7 +1014,6 @@ class VariantSelects extends HTMLElement {
       addButton.setAttribute('disabled', 'disabled');
       if (text) addButtonText.textContent = text;
     } else {
-      addButton.removeAttribute('disabled');
       addButtonText.textContent = window.variantStrings.addToCart;
     }
 
@@ -1040,6 +1060,7 @@ class VariantRadios extends VariantSelects {
   }
 
   updateOptions() {
+
     const fieldsets = Array.from(this.querySelectorAll('fieldset'));
     this.options = fieldsets.map((fieldset) => {
       return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
@@ -1052,6 +1073,7 @@ class VariantRadios extends VariantSelects {
     // and display image. 
     if (selectedValue === 'Unselected') {
       this.options.push('Medium')
+      this.updateAddtoCartDisableOption()
     } else {
       this.options.push(selectedValue)
     }

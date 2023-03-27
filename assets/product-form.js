@@ -2,14 +2,27 @@ if (!customElements.get('product-form')) {
   customElements.define('product-form', class ProductForm extends HTMLElement {
     constructor() {
       super();
-
       this.form = this.querySelector('form');
       this.form.querySelector('[name=id]').disabled = false;
       this.form.addEventListener('submit', this.onSubmitHandler.bind(this));
       this.cart = document.querySelector('cart-notification') || document.querySelector('cart-drawer');
       this.submitButton = this.querySelector('[type="submit"]');
       if (document.querySelector('cart-drawer')) this.submitButton.setAttribute('aria-haspopup', 'dialog');
+      this.disableAddToCartButton();
+    }
 
+    disableAddToCartButton() {
+      const dropdown = document.querySelector('.select__select');
+      const selectedValue = dropdown.value;
+      const addButton = this.form.querySelector('[name="add"]');
+      const buyButton = this.form.querySelector('.product-form__buttons .shopify-payment-button button');
+      if (selectedValue === 'Unselected') {
+        addButton.setAttribute("disabled", "disabled");
+        buyButton.setAttribute("disabled", "disabled");
+      } else {
+        addButton.removeAttribute("disabled");
+        buyButton.removeAttribute("disabled");
+      }
     }
 
     addAdditionalProduct(response, config) {
