@@ -806,7 +806,7 @@ class VariantSelects extends HTMLElement {
     this.updatePickupAvailability();
     this.removeErrorMessage();
     this.updateVariantStatuses();
-
+    this.filterImageVariant();
     if (!this.currentVariant) {
       this.toggleAddButton(true, '', true);
       this.setUnavailable();
@@ -816,6 +816,23 @@ class VariantSelects extends HTMLElement {
       this.updateVariantInput();
       this.renderProductInfo();
       this.updateShareUrl();
+    }
+  }
+
+  filterImageVariant() {
+    if (this.currentVariant.featured_image && this.currentVariant.featured_image.alt) {
+      document.querySelectorAll('[thumbnail-alt]').forEach((x) => {
+        x.style.display = 'none'
+      })
+      const currentImgAlt = this.currentVariant.featured_image.alt;
+      const thumbnailSelector = `[thumbnail-alt =${currentImgAlt}]`
+      document.querySelectorAll(thumbnailSelector).forEach((x) => {
+        x.style.display = 'block'
+      })
+    } else {
+      document.querySelectorAll('[thumbnail-alt]').forEach((x) => {
+        x.style.display = 'block`'
+      })
     }
   }
 
