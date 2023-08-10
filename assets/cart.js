@@ -83,9 +83,48 @@ class CartItems extends HTMLElement {
     ];
   }
 
+  async deleteProductBasedOnVariant(variant_id) {
+    // so this code delete the product based on the variant ID
+    const url = '/cart/change.js';
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: `quantity=0&id=${variant_id}`
+    };
+
+    const promise = fetch(url, options)
+      .then(response => {
+        if (response.ok) {
+          return response.text();
+        } else {
+          throw new Error('Error removing product from cart');
+        }
+      }).then((state) => {
+
+        const data = JSON.parse(state);
+        return data;
+      })
+      .catch(error => console.error(error));
+    try {
+      const parsedState = await Promise.all([promise]);
+      return parsedState;
+    } catch (error_1) {
+      return console.error(error_1);
+    }
+
+  }
+
+  hasVariantId(array, variantID) {
+    return array.some(obj => obj.variant_id === variantID);
+  }
+
+
+
   updateQuantity(line, quantity, name) {
     this.enableLoading(line);
-
     const body = JSON.stringify({
       line,
       quantity,
@@ -97,8 +136,25 @@ class CartItems extends HTMLElement {
       .then((response) => {
         return response.text();
       })
-      .then((state) => {
-        const parsedState = JSON.parse(state);
+      .then(async (state) => {
+
+        let parsedState = JSON.parse(state);
+        //parsedState.items will have products that are currently present in the cart 
+        //so hasVariantId function check that the cart items have variant id of black-medium-handbag
+        const ourProduct = this.hasVariantId(parsedState.items, 44819692978498)
+        // and check the variant id of our additional product added.
+        const additionalProduct = this.hasVariantId(parsedState.items, 44823713743170)
+        // so if our product id is not present but additional product variant id is present then it means
+        // our product is deleted so should then we delete the addional product as well. 
+
+        if (!ourProduct && additionalProduct) {
+          let updatedState = await this.deleteProductBasedOnVariant(44823713743170);
+          if (updatedState.length > 0) {
+            // so after we delete the additional product we have to update the parsedstate.item array.
+            parsedState = updatedState[0];
+          }
+        }
+
         const quantityElement = document.getElementById(`Quantity-${line}`) || document.getElementById(`Drawer-quantity-${line}`);
         const items = document.querySelectorAll('.cart-item');
 
@@ -140,7 +196,7 @@ class CartItems extends HTMLElement {
         } else if (document.querySelector('.cart-item') && cartDrawerWrapper) {
           trapFocus(cartDrawerWrapper, document.querySelector('.cart-item__name'))
         }
-        publish(PUB_SUB_EVENTS.cartUpdate, {source: 'cart-items'});
+        publish(PUB_SUB_EVENTS.cartUpdate, { source: 'cart-items' });
       }).catch(() => {
         this.querySelectorAll('.loading-overlay').forEach((overlay) => overlay.classList.add('hidden'));
         const errors = document.getElementById('cart-errors') || document.getElementById('CartDrawer-CartErrors');
@@ -200,13 +256,13 @@ customElements.define('cart-items', CartItems);
 
 if (!customElements.get('cart-note')) {
   customElements.define('cart-note', class CartNote extends HTMLElement {
-      constructor() {
-        super();
+    constructor() {
+      super();
 
       this.addEventListener('change', debounce((event) => {
-            const body = JSON.stringify({ note: event.target.value });
-            fetch(`${routes.cart_update_url}`, { ...fetchConfig(), ...{ body } });
+        const body = JSON.stringify({ note: event.target.value });
+        fetch(`${routes.cart_update_url}`, { ...fetchConfig(), ...{ body } });
       }, ON_CHANGE_DEBOUNCE_TIMER))
-      }
+    }
   });
 };

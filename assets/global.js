@@ -10,7 +10,7 @@ document.querySelectorAll('[id^="Details-"] summary').forEach((summary) => {
   summary.setAttribute('role', 'button');
   summary.setAttribute('aria-expanded', summary.parentNode.hasAttribute('open'));
 
-  if(summary.nextElementSibling.getAttribute('id')) {
+  if (summary.nextElementSibling.getAttribute('id')) {
     summary.setAttribute('aria-controls', summary.nextElementSibling.id);
   }
 
@@ -42,11 +42,11 @@ function trapFocus(container, elementToFocus = container) {
     document.addEventListener('keydown', trapFocusHandlers.keydown);
   };
 
-  trapFocusHandlers.focusout = function() {
+  trapFocusHandlers.focusout = function () {
     document.removeEventListener('keydown', trapFocusHandlers.keydown);
   };
 
-  trapFocusHandlers.keydown = function(event) {
+  trapFocusHandlers.keydown = function (event) {
     if (event.code.toUpperCase() !== 'TAB') return; // If not TAB key
     // On the last focusable element and tab forward, focus the first element.
     if (event.target === last && !event.shiftKey) {
@@ -79,7 +79,7 @@ function trapFocus(container, elementToFocus = container) {
 // Here run the querySelector to figure out if the browser supports :focus-visible or not and run code based on it.
 try {
   document.querySelector(":focus-visible");
-} catch(e) {
+} catch (e) {
   focusVisiblePolyfill();
 }
 
@@ -89,7 +89,7 @@ function focusVisiblePolyfill() {
   let mouseClick = null;
 
   window.addEventListener('keydown', (event) => {
-    if(navKeys.includes(event.code.toUpperCase())) {
+    if (navKeys.includes(event.code.toUpperCase())) {
       mouseClick = false;
     }
   });
@@ -190,7 +190,7 @@ class QuantityInput extends HTMLElement {
       const max = parseInt(this.input.max);
       const buttonPlus = this.querySelector(".quantity__button[name='plus']");
       buttonPlus.classList.toggle('disabled', value >= max);
-    } 
+    }
   }
 }
 
@@ -219,13 +219,13 @@ if ((typeof window.Shopify) == 'undefined') {
   window.Shopify = {};
 }
 
-Shopify.bind = function(fn, scope) {
-  return function() {
+Shopify.bind = function (fn, scope) {
+  return function () {
     return fn.apply(scope, arguments);
   }
 };
 
-Shopify.setSelectorByValue = function(selector, value) {
+Shopify.setSelectorByValue = function (selector, value) {
   for (var i = 0, count = selector.options.length; i < count; i++) {
     var option = selector.options[i];
     if (value == option.value || value == option.innerHTML) {
@@ -235,11 +235,11 @@ Shopify.setSelectorByValue = function(selector, value) {
   }
 };
 
-Shopify.addListener = function(target, eventName, callback) {
-  target.addEventListener ? target.addEventListener(eventName, callback, false) : target.attachEvent('on'+eventName, callback);
+Shopify.addListener = function (target, eventName, callback) {
+  target.addEventListener ? target.addEventListener(eventName, callback, false) : target.attachEvent('on' + eventName, callback);
 };
 
-Shopify.postLink = function(path, options) {
+Shopify.postLink = function (path, options) {
   options = options || {};
   var method = options['method'] || 'post';
   var params = options['parameters'] || {};
@@ -248,7 +248,7 @@ Shopify.postLink = function(path, options) {
   form.setAttribute("method", method);
   form.setAttribute("action", path);
 
-  for(var key in params) {
+  for (var key in params) {
     var hiddenField = document.createElement("input");
     hiddenField.setAttribute("type", "hidden");
     hiddenField.setAttribute("name", key);
@@ -260,34 +260,34 @@ Shopify.postLink = function(path, options) {
   document.body.removeChild(form);
 };
 
-Shopify.CountryProvinceSelector = function(country_domid, province_domid, options) {
-  this.countryEl         = document.getElementById(country_domid);
-  this.provinceEl        = document.getElementById(province_domid);
+Shopify.CountryProvinceSelector = function (country_domid, province_domid, options) {
+  this.countryEl = document.getElementById(country_domid);
+  this.provinceEl = document.getElementById(province_domid);
   this.provinceContainer = document.getElementById(options['hideElement'] || province_domid);
 
-  Shopify.addListener(this.countryEl, 'change', Shopify.bind(this.countryHandler,this));
+  Shopify.addListener(this.countryEl, 'change', Shopify.bind(this.countryHandler, this));
 
   this.initCountry();
   this.initProvince();
 };
 
 Shopify.CountryProvinceSelector.prototype = {
-  initCountry: function() {
+  initCountry: function () {
     var value = this.countryEl.getAttribute('data-default');
     Shopify.setSelectorByValue(this.countryEl, value);
     this.countryHandler();
   },
 
-  initProvince: function() {
+  initProvince: function () {
     var value = this.provinceEl.getAttribute('data-default');
     if (value && this.provinceEl.options.length > 0) {
       Shopify.setSelectorByValue(this.provinceEl, value);
     }
   },
 
-  countryHandler: function(e) {
-    var opt       = this.countryEl.options[this.countryEl.selectedIndex];
-    var raw       = opt.getAttribute('data-provinces');
+  countryHandler: function (e) {
+    var opt = this.countryEl.options[this.countryEl.selectedIndex];
+    var raw = opt.getAttribute('data-provinces');
     var provinces = JSON.parse(raw);
 
     this.clearOptions(this.provinceEl);
@@ -305,13 +305,13 @@ Shopify.CountryProvinceSelector.prototype = {
     }
   },
 
-  clearOptions: function(selector) {
+  clearOptions: function (selector) {
     while (selector.firstChild) {
       selector.removeChild(selector.firstChild);
     }
   },
 
-  setOptions: function(selector, values) {
+  setOptions: function (selector, values) {
     for (var i = 0, count = values.length; i < values.length; i++) {
       var opt = document.createElement('option');
       opt.value = values[i];
@@ -338,10 +338,10 @@ class MenuDrawer extends HTMLElement {
   }
 
   onKeyUp(event) {
-    if(event.code.toUpperCase() !== 'ESCAPE') return;
+    if (event.code.toUpperCase() !== 'ESCAPE') return;
 
     const openDetailsElement = event.target.closest('details[open]');
-    if(!openDetailsElement) return;
+    if (!openDetailsElement) return;
 
     openDetailsElement === this.mainDetailsToggle ? this.closeMenuDrawer(event, this.mainDetailsToggle.querySelector('summary')) : this.closeSubmenu(openDetailsElement);
   }
@@ -359,7 +359,7 @@ class MenuDrawer extends HTMLElement {
     }
 
     if (detailsElement === this.mainDetailsToggle) {
-      if(isOpen) event.preventDefault();
+      if (isOpen) event.preventDefault();
       isOpen ? this.closeMenuDrawer(event, summaryElement) : this.openMenuDrawer(summaryElement);
 
       if (window.matchMedia('(max-width: 990px)')) {
@@ -609,10 +609,12 @@ class SliderComponent extends HTMLElement {
     }
 
     if (this.currentPage != previousPage) {
-      this.dispatchEvent(new CustomEvent('slideChanged', { detail: {
-        currentPage: this.currentPage,
-        currentElement: this.sliderItemsToShow[this.currentPage - 1]
-      }}));
+      this.dispatchEvent(new CustomEvent('slideChanged', {
+        detail: {
+          currentPage: this.currentPage,
+          currentElement: this.sliderItemsToShow[this.currentPage - 1]
+        }
+      }));
     }
 
     if (this.enableSliderLooping) return;
@@ -804,7 +806,8 @@ class VariantSelects extends HTMLElement {
     this.updatePickupAvailability();
     this.removeErrorMessage();
     this.updateVariantStatuses();
-
+    this.filterImageVariant();
+    this.updateAddtoCartDisableOption()
     if (!this.currentVariant) {
       this.toggleAddButton(true, '', true);
       this.setUnavailable();
@@ -817,34 +820,83 @@ class VariantSelects extends HTMLElement {
     }
   }
 
-  updateOptions() {
-    this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
+  updateAddtoCartDisableOption() {
+    const productForm = document.getElementById(`product-form-${this.dataset.section}`);
+    if (!productForm) return;
+    const dropdown = document.querySelector('.select__select');
+    const selectedValue = dropdown.value;
+    const addButton = productForm.querySelector('[name="add"]');
+    const buyButton = productForm.querySelector('.product-form__buttons .shopify-payment-button button');
+    if (selectedValue === 'Unselected') {
+      addButton.setAttribute("disabled", "disabled");
+      buyButton.setAttribute("disabled", "disabled");
+    } else {
+      addButton.removeAttribute("disabled");
+      buyButton.removeAttribute("disabled");
+    }
   }
 
+
+  filterImageVariant() {
+    if (this.currentVariant.featured_image && this.currentVariant.featured_image.alt) {
+      document.querySelectorAll('[thumbnail-alt]').forEach((x) => {
+        x.style.display = 'none'
+      })
+      const currentImgAlt = this.currentVariant.featured_image.alt;
+      const thumbnailSelector = `[thumbnail-alt =${currentImgAlt}]`
+      document.querySelectorAll(thumbnailSelector).forEach((x) => {
+        x.style.display = 'block'
+      })
+    } else {
+      document.querySelectorAll('[thumbnail-alt]').forEach((x) => {
+        x.style.display = 'block`'
+      })
+    }
+  }
+
+  updateOptions() {
+
+    this.options = Array.from(this.querySelectorAll('select'), (select) => select.value);
+    // same here i have get the radio variant value when dropdown is selected. 
+    const radios = document.querySelector('variant-radios');
+    const selectedOption = radios.querySelector('input:checked');
+    const selectedValue = selectedOption.value;
+    // so i added a manual unselected option so when user select this by choice then we put the make our variant
+    // selected color and medium so that our media is updated and user experience is not effected
+    if (this.options[0] === 'Unselected') {
+      this.options = [selectedValue, 'Medium'];
+    } else {
+      this.options.push(selectedValue);
+    }
+
+  }
+
+
   updateMasterId() {
-    this.currentVariant = this.getVariantData().find((variant) => {
-      return !variant.options.map((option, index) => {
-        return this.options[index] === option;
-      }).includes(false);
-    });
+    // so here now we have selected size and color in our option variable so we filter from all variants options and set the currentVariant 
+    this.currentVariant = this.getVariantData().find((obj) => {
+      const sortedObjOptions = this.options.slice().sort();
+      const sortedInputOptions = obj.options.slice().sort();
+      return JSON.stringify(sortedInputOptions) === JSON.stringify(sortedObjOptions);
+    })
+
   }
 
   updateMedia() {
     if (!this.currentVariant) return;
     if (!this.currentVariant.featured_media) return;
-
     const mediaGalleries = document.querySelectorAll(`[id^="MediaGallery-${this.dataset.section}"]`);
     mediaGalleries.forEach(mediaGallery => mediaGallery.setActiveMedia(`${this.dataset.section}-${this.currentVariant.featured_media.id}`, true));
 
     const modalContent = document.querySelector(`#ProductModal-${this.dataset.section} .product-media-modal__content`);
     if (!modalContent) return;
-    const newMediaModal = modalContent.querySelector( `[data-media-id="${this.currentVariant.featured_media.id}"]`);
+    const newMediaModal = modalContent.querySelector(`[data-media-id="${this.currentVariant.featured_media.id}"]`);
     modalContent.prepend(newMediaModal);
   }
 
   updateURL() {
     if (!this.currentVariant || this.dataset.updateUrl === 'false') return;
-    window.history.replaceState({ }, '', `${this.dataset.url}?variant=${this.currentVariant.id}`);
+    window.history.replaceState({}, '', `${this.dataset.url}?variant=${this.currentVariant.id}`);
   }
 
   updateShareUrl() {
@@ -869,7 +921,7 @@ class VariantSelects extends HTMLElement {
       if (index === 0) return;
       const optionInputs = [...option.querySelectorAll('input[type="radio"], option')]
       const previousOptionSelected = inputWrappers[index - 1].querySelector(':checked').value;
-      const availableOptionInputsValue = selectedOptionOneVariants.filter(variant => variant.available && variant[`option${ index }`] === previousOptionSelected).map(variantOption => variantOption[`option${ index + 1 }`]);
+      const availableOptionInputsValue = selectedOptionOneVariants.filter(variant => variant.available && variant[`option${index}`] === previousOptionSelected).map(variantOption => variantOption[`option${index + 1}`]);
       this.setInputAvailability(optionInputs, availableOptionInputsValue)
     });
   }
@@ -931,18 +983,23 @@ class VariantSelects extends HTMLElement {
 
         const price = document.getElementById(`price-${this.dataset.section}`);
 
-        if (price) price.classList.remove('visibility-hidden');
+        if (price) {
+          price.classList.remove('visibility-hidden')
+
+        }
 
         if (inventoryDestination) inventoryDestination.classList.toggle('visibility-hidden', inventorySource.innerText === '');
 
         const addButtonUpdated = html.getElementById(`ProductSubmitButton-${sectionId}`);
         this.toggleAddButton(addButtonUpdated ? addButtonUpdated.hasAttribute('disabled') : true, window.variantStrings.soldOut);
 
-        publish(PUB_SUB_EVENTS.variantChange, {data: {
-          sectionId,
-          html,
-          variant: this.currentVariant
-        }});
+        publish(PUB_SUB_EVENTS.variantChange, {
+          data: {
+            sectionId,
+            html,
+            variant: this.currentVariant
+          }
+        });
       });
   }
 
@@ -957,7 +1014,6 @@ class VariantSelects extends HTMLElement {
       addButton.setAttribute('disabled', 'disabled');
       if (text) addButtonText.textContent = text;
     } else {
-      addButton.removeAttribute('disabled');
       addButtonText.textContent = window.variantStrings.addToCart;
     }
 
@@ -990,6 +1046,7 @@ customElements.define('variant-selects', VariantSelects);
 class VariantRadios extends VariantSelects {
   constructor() {
     super();
+
   }
 
   setInputAvailability(listOfOptions, listOfAvailableOptions) {
@@ -1003,10 +1060,25 @@ class VariantRadios extends VariantSelects {
   }
 
   updateOptions() {
+
     const fieldsets = Array.from(this.querySelectorAll('fieldset'));
     this.options = fieldsets.map((fieldset) => {
       return Array.from(fieldset.querySelectorAll('input')).find((radio) => radio.checked).value;
     });
+    // so here when we select radio buttons then only color will come ['red'] like this
+    // so we get the selected value of dropdown which is size and then push it to options
+    const dropdown = document.querySelector('.select__select');
+    const selectedValue = dropdown.value;
+    // so when color is selected and we size dropdown is unselected for now so we manually put the medium size to make the our currentVariant
+    // and display image. 
+    if (selectedValue === 'Unselected') {
+      this.options.push('Medium')
+      this.updateAddtoCartDisableOption()
+    } else {
+      this.options.push(selectedValue)
+    }
+
+
   }
 }
 
@@ -1046,7 +1118,7 @@ class ProductRecommendations extends HTMLElement {
         });
     }
 
-    new IntersectionObserver(handleIntersection.bind(this), {rootMargin: '0px 0px 400px 0px'}).observe(this);
+    new IntersectionObserver(handleIntersection.bind(this), { rootMargin: '0px 0px 400px 0px' }).observe(this);
   }
 }
 
